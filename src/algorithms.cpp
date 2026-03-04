@@ -101,7 +101,7 @@ namespace sort
 
   void InsertionSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
-    TRACE("Start insertion sorting ...\n" << endl);
+    TRACE("Start INSERTION sorting ...\n" << endl);
     int pass = 0;
     int total_shifts = 0;
 
@@ -109,6 +109,7 @@ namespace sort
       pass++;
       TRACE("\tPass " << pass << " (processing element at index " << i << "):" << endl);
         
+      // Store temporary element of the array
       int32_t temp = array[i];
       TRACE("\tCurrent element to insert: " << temp << endl);
 
@@ -116,23 +117,27 @@ namespace sort
       int pass_shifts = 0;
       bool shifted = false;
       
-      if (visualize) {
+      if (visualize)
         draw_state(array, size, start_time, i);
-      }
 
+      // compare with the previous element (temp < j) 
       while (j >= 0 && temp < array[j]) {
         TRACE("\t\tShifting " << array[j] << " from index " << j << " to index " << (j+1) << endl);
+        
+        // shift elem
         array[j+1] = array[j];
-        if (visualize) {
+        j--;
+
+        if (visualize)
           draw_state(array, size, start_time, j, j+1);
-        }
-        j = j - 1;
+        
         pass_shifts++;
         total_shifts++;
         shifted = true;
       }
       
       array[j+1] = temp;
+      
       if (visualize)
         draw_state(array, size, start_time, j+1);
     
@@ -149,6 +154,7 @@ namespace sort
       }
       TRACE(endl << endl);
     }
+
     TRACE("\nTotal passes: " << pass << ", Total shifts: " << total_shifts << endl);
     if (visualize) {
       draw_state(array, size, start_time);
@@ -157,32 +163,36 @@ namespace sort
 
   void SelectionSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
-    TRACE("Start selection sorting ...\n" << endl);
+    TRACE("Start SELECTION sorting ...\n" << endl);
     int pass = 0;
     int total_swaps = 0;
 
     for (int j = size - 1; j >= 0; j--) {
-      pass++;
-      TRACE("\tPass " << pass << " (finding max in range 0 to " << j << "):" << endl);
+      TRACE("\tPass " << pass++ << " (finding max in range 0 to " << j << "):" << endl);
       
       int32_t _max = array[j];
       int idx = j;
 
       if (visualize)
         draw_state(array, size, start_time, j);
-
+      
+      // Iterate to the j index (size - 1)
       for (int i = 0; i < j; i++) {
         TRACE("\t\tComparing " << array[i] << " with current max " << _max);
-        if (visualize) {
-          draw_state(array, size, start_time, i, idx, j);
-        }
 
+        if (visualize)
+          draw_state(array, size, start_time, i, idx, j);
+
+        // Compare array[i] with _max, if it greater than _max,
+        // rewrite _max variable, and index (idx) of the _max
         if (array[i] > _max) {
           _max = array[i];
           idx = i;
+          
           TRACE(" -> New max found!");
           if (visualize)
             draw_state(array, size, start_time, i, idx, j);
+        
         }
         TRACE(endl);
       }    
@@ -197,6 +207,7 @@ namespace sort
       }
 
       swap(array[j], array[idx]);
+
       if (visualize)
         draw_state(array, size, start_time, j, idx);
       
@@ -206,7 +217,9 @@ namespace sort
       }
       TRACE(endl << endl);
     }
+    
     TRACE("\nTotal passes: " << pass << ", Total swaps: " << total_swaps << endl);
+
     if (visualize)
       draw_state(array, size, start_time);
   }
@@ -219,8 +232,13 @@ namespace sort
     int n1 = mid - left + 1;
     int n2 = right - mid;
 
+    // Dynamically allocate memory for new arrays
     int32_t* L = new int32_t[n1];
     int32_t* R = new int32_t[n2];
+
+    // Devide an array into two parts
+    // - Left subarray 
+    // - Right subarray
 
     TRACE("\t\tLeft subarray: ");
     for (int i = 0; i < n1; i++) {
@@ -245,6 +263,7 @@ namespace sort
     while (i < n1 && j < n2) {
       comparisons++;
       TRACE("\t\t\tComparing " << L[i] << " (left) and " << R[j] << " (right) -> ");
+
       if (visualize)
         draw_state(array, total_size, start_time, left + i, mid + 1 + j, k);
 
@@ -258,9 +277,8 @@ namespace sort
         j++;
       }
       TRACE(endl);
-      if (visualize) {
+      if (visualize)
         draw_state(array, total_size, start_time, k);
-      }
       k++;
     }
 
@@ -283,6 +301,7 @@ namespace sort
       k++;
     }
 
+    // Deallocate memory
     delete[] L;
     delete[] R;
 
