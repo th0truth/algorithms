@@ -11,9 +11,10 @@ using namespace std;
 
 struct Config {
   string algorithm;
-  bool visualize = false;
   vector<string> raw_elements;
+  bool visualize = false;
   bool is_random = false;
+  bool is_sound = false;
   int random_count = 0;
   int32_t random_min = 0;
   int32_t random_max = 0;
@@ -21,16 +22,21 @@ struct Config {
 
 void print_usage(const char* program_name)
 {
-  cout << "Usage: " << program_name << " <algorithm> [--visualize] <array_elements...>" << endl;
-  cout << "       " << program_name << " <algorithm> [--visualize] random <count> <min> <max>" << endl;
+  cout << "Usage: " << program_name << " <algorithm> [--visualize] [--sound] <array_elements...>" << endl;
+  cout << "       " << program_name << " <algorithm> [--visualize] [--sound] random <count> <min> <max>" << endl;
   cout << "\nAvailable algorithms:" << endl;
   cout << "  BubbleSort      - Bubble sort algorithm" << endl;
   cout << "  InsertionSort   - Insertion sort algorithm" << endl;
   cout << "  SelectionSort   - Selection sort algorithm" << endl;
   cout << "  MergeSort       - Merge sort algorithm" << endl;
+  cout << "  QuickSort       - Quick sort algorithm" << endl;
+  cout << "\nOptions:" << endl;
+  cout << "  --visualize     Show visual representation of sorting" << endl;
+  cout << "  --sound         Enable sound during visualization" << endl;
   cout << "\nExample:" << endl;
   cout << "  " << program_name << " BubbleSort 64 34 25 12 22 11 90" << endl;
   cout << "  " << program_name << " BubbleSort --visualize random 15 1 100" << endl;
+  cout << "  " << program_name << " BubbleSort --visualize --sound random 15 1 100" << endl;
 }
 
 bool parse_arguments(int argc, char **argv, Config &config)
@@ -43,6 +49,8 @@ bool parse_arguments(int argc, char **argv, Config &config)
     string arg = argv[i];
     if (arg == "--visualize") {
       config.visualize = true;
+    } else if (arg == "--sound") {
+      config.is_sound = true;
     } else {
       args.push_back(arg);
     }
@@ -104,6 +112,8 @@ void execute_sort(const string &algorithm, int32_t *data, int size, bool visuali
     sort::SelectionSort(data, size, visualize, begin);
   } else if (algorithm == "MergeSort") {
     sort::MergeSort(data, size, visualize, begin);
+  } else if (algorithm == "QuickSort") {
+    sort::QuickSort(data, size, visualize, begin);
   } else {
     cerr << "Error: Unknown algorithm '" << algorithm << "'" << endl;
   }
@@ -131,7 +141,7 @@ int main(int argc, char** argv)
     cout << "\n\nRunning " << config.algorithm << "..." << endl;
   }
 
-  if (config.visualize)
+  if (config.visualize && config.is_sound)
     SortAudio::init();
 
   auto begin = chrono::steady_clock::now();
@@ -145,7 +155,8 @@ int main(int argc, char** argv)
     }
   } else {
     cout << "Sorted completely.\n";
-    SortAudio::cleanup();
+    if (config.is_sound)
+      SortAudio::cleanup();
   }
 
   cout << "\nDuration time: " << chrono::duration_cast<chrono::nanoseconds>(end - begin).count() << " ns" << endl;

@@ -294,7 +294,7 @@ namespace sort
     TRACE(endl);
   }
 
-  static void merge_sort_helper(int32_t *array, int left, int right, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
+  static void merge_sort_helper(int32_t* array, int left, int right, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     if (left < right) {
       int mid = left + (right - left) / 2;
@@ -307,7 +307,7 @@ namespace sort
     }
   }
 
-  void MergeSort(int32_t *array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  void MergeSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     TRACE("Start merge sorting ...\n" << endl);
     merge_count = 0;
@@ -316,6 +316,69 @@ namespace sort
     merge_sort_helper(array, 0, size - 1, size, visualize, start_time);
     
     TRACE("\n\nTotal merges performed: " << merge_count << endl);
+    if (visualize)
+      draw_state(array, size, start_time);
+  }
+
+  static int quick_sort_partition(int32_t* array, int low, int high, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
+  {
+    TRACE("\tPartitioning range [" << low << "-" << high << "]" << endl);
+    
+    int pivot = array[high];
+    TRACE("\t\tPivot selected: " << pivot << " at index " << high << endl);
+
+    int i = low - 1;
+
+    for (int j = low; j <= high - 1; j++) {
+      TRACE("\t\tComparing " << array[j] << " with pivot " << pivot);
+      if (visualize) {
+        draw_state(array, total_size, start_time, j, high, i + 1);
+      }
+
+      if (array[j] < pivot) {
+        i++;
+        TRACE(" -> " << array[j] << " < pivot, swapping with index " << i);
+        swap(array[i], array[j]);
+        if (visualize) {
+          draw_state(array, total_size, start_time, i, j, high);
+        }
+      }
+      TRACE(endl);
+    }
+
+    TRACE("\t\tPlacing pivot at correct position " << (i + 1) << endl);
+    swap(array[i + 1], array[high]);
+    if (visualize) {
+      draw_state(array, total_size, start_time, i + 1, high);
+    }
+    
+    TRACE("\t\tPivot placed at index " << (i + 1) << endl);
+    return i + 1;
+  }
+
+  static void quick_sort_helper(int32_t* array, int low, int high, int total_size, bool visualize, chrono::steady_clock::time_point start_time, int &pass_count)
+  {
+    if (low < high) {
+      pass_count++;
+      TRACE("\nQuickSort Pass #" << pass_count << ": Sorting range [" << low << "-" << high << "]" << endl);
+      
+      int pi = quick_sort_partition(array, low, high, total_size, visualize, start_time);
+      
+      TRACE("\tPartition complete. Pivot now at index " << pi << endl);
+      
+      quick_sort_helper(array, low, pi - 1, total_size, visualize, start_time, pass_count);
+      quick_sort_helper(array, pi + 1, high, total_size, visualize, start_time, pass_count);
+    }
+  }
+
+  void QuickSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  {
+    TRACE("Start quick sorting ...\n" << endl);
+    int pass_count = 0;
+    
+    quick_sort_helper(array, 0, size - 1, size, visualize, start_time, pass_count);
+    
+    TRACE("\nTotal partitions: " << pass_count << endl);
     if (visualize) {
       draw_state(array, size, start_time);
     }

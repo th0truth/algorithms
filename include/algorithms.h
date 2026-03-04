@@ -12,4 +12,5 @@ namespace sort
   void InsertionSort(int32_t* array, int size, bool visualize = false, std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now());
   void BubbleSort(int32_t* array, int size, bool visualize = false, std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now());
   void MergeSort(int32_t* array, int size, bool visualize = false, std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now());
+  void QuickSort(int32_t* array, int size, bool visualize = false, std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now());
 }
