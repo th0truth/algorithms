@@ -279,6 +279,7 @@ namespace sort
       k++;
     }
 
+    // Copy the remaining elements of L[]
     while (i < n1) {
       TRACE("\t\t\tCopying remaining " << L[i] << " from left to index " << k << endl);
       array[k] = L[i];
@@ -288,12 +289,12 @@ namespace sort
       k++;
     }
 
+    // Copy the remaining elements of R[]
     while (j < n2) {
       TRACE("\t\t\tCopying remaining " << R[j] << " from right to index " << k << endl);
       array[k] = R[j];
-      if (visualize) {
+      if (visualize)
         draw_state(array, total_size, start_time, k);
-      }
       j++;
       k++;
     }
@@ -347,26 +348,24 @@ namespace sort
 
     for (int j = low; j <= high - 1; j++) {
       TRACE("\t\tComparing " << array[j] << " with pivot " << pivot);
-      if (visualize) {
+      if (visualize)
         draw_state(array, total_size, start_time, j, high, i + 1);
-      }
+      
 
       if (array[j] < pivot) {
         i++;
         TRACE(" -> " << array[j] << " < pivot, swapping with index " << i);
         swap(array[i], array[j]);
-        if (visualize) {
+        if (visualize)
           draw_state(array, total_size, start_time, i, j, high);
-        }
       }
       TRACE(endl);
     }
 
     TRACE("\t\tPlacing pivot at correct position " << (i + 1) << endl);
     swap(array[i + 1], array[high]);
-    if (visualize) {
+    if (visualize)
       draw_state(array, total_size, start_time, i + 1, high);
-    }
     
     TRACE("\t\tPivot placed at index " << (i + 1) << endl);
     return i + 1;
@@ -395,8 +394,7 @@ namespace sort
     quick_sort_helper(array, 0, size - 1, size, visualize, start_time, pass_count);
     
     TRACE("\nTotal partitions: " << pass_count << endl);
-    if (visualize) {
+    if (visualize)
       draw_state(array, size, start_time);
-    }
   }
 }
