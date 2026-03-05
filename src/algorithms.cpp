@@ -94,9 +94,8 @@ namespace sort
       TRACE(endl);
     }
     TRACE("\nTotal passes: " << pass << ", Total swaps: " << total_swaps << endl);
-    if (visualize) {
+    if (visualize) 
       draw_state(array, size, start_time);
-    }
   }
 
   void InsertionSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
@@ -156,9 +155,8 @@ namespace sort
     }
 
     TRACE("\nTotal passes: " << pass << ", Total shifts: " << total_shifts << endl);
-    if (visualize) {
+    if (visualize)
       draw_state(array, size, start_time);
-    }
   }
 
   void SelectionSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
@@ -192,7 +190,6 @@ namespace sort
           TRACE(" -> New max found!");
           if (visualize)
             draw_state(array, size, start_time, i, idx, j);
-        
         }
         TRACE(endl);
       }    
