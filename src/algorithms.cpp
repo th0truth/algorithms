@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdint>
+#include "base.h"
 #include <thread>
 #include <chrono>
 
@@ -10,7 +11,7 @@ using namespace std;
 
 namespace sort
 {
-  static void draw_state(int32_t* array, int size, chrono::steady_clock::time_point start_time, int h1 = -1, int h2 = -1, int h3 = -1)
+  static void draw_state(i32* array, int size, chrono::steady_clock::time_point start_time, int h1 = -1, int h2 = -1, int h3 = -1)
   {
     cout << "\033[2J\033[H";
     auto now = chrono::steady_clock::now();
@@ -49,7 +50,7 @@ namespace sort
     }
   }
 
-  void BubbleSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  void BubbleSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     TRACE("Start bubble sorting ...\n" << endl);
     int pass = 0;
@@ -98,7 +99,7 @@ namespace sort
       draw_state(array, size, start_time);
   }
 
-  void InsertionSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  void InsertionSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     TRACE("Start INSERTION sorting ...\n" << endl);
     int pass = 0;
@@ -109,7 +110,7 @@ namespace sort
       TRACE("\tPass " << pass << " (processing element at index " << i << "):" << endl);
         
       // Store temporary element of the array
-      int32_t temp = array[i];
+      i32 temp = array[i];
       TRACE("\tCurrent element to insert: " << temp << endl);
 
       int j = i - 1;
@@ -159,7 +160,7 @@ namespace sort
       draw_state(array, size, start_time);
   }
 
-  void SelectionSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  void SelectionSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     TRACE("Start SELECTION sorting ...\n" << endl);
     int pass = 0;
@@ -168,7 +169,7 @@ namespace sort
     for (int j = size - 1; j >= 0; j--) {
       TRACE("\tPass " << pass++ << " (finding max in range 0 to " << j << "):" << endl);
       
-      int32_t _max = array[j];
+      i32 _max = array[j];
       int idx = j;
 
       if (visualize)
@@ -221,7 +222,7 @@ namespace sort
       draw_state(array, size, start_time);
   }
 
-  static void merge(int32_t* array, int left, int mid, int right, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
+  static void merge(i32* array, int left, int mid, int right, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     merge_count++;
     TRACE("\n\tMerge #" << merge_count << " (merging indices " << left << "-" << mid << " and " << (mid + 1) << "-" << right << "):" << endl);
@@ -230,8 +231,8 @@ namespace sort
     int n2 = right - mid;
 
     // Dynamically allocate memory for new arrays
-    int32_t* L = new int32_t[n1];
-    int32_t* R = new int32_t[n2];
+    i32* L = new i32[n1];
+    i32* R = new i32[n2];
 
     // Devide an array into two parts
     // - Left subarray 
@@ -311,7 +312,7 @@ namespace sort
     TRACE(endl);
   }
 
-  static void merge_sort_helper(int32_t* array, int left, int right, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
+  static void merge_sort_helper(i32* array, int left, int right, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     if (left < right) {
       int mid = left + (right - left) / 2;
@@ -324,7 +325,7 @@ namespace sort
     }
   }
 
-  void MergeSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  void MergeSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     TRACE("Start merge sorting ...\n" << endl);
     merge_count = 0;
@@ -337,7 +338,7 @@ namespace sort
       draw_state(array, size, start_time);
   }
 
-  static int quick_sort_partition(int32_t* array, int low, int high, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
+  static int quick_sort_partition(i32* array, int low, int high, int total_size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     TRACE("\tPartitioning range [" << low << "-" << high << "]" << endl);
     
@@ -371,7 +372,7 @@ namespace sort
     return i + 1;
   }
 
-  static void quick_sort_helper(int32_t* array, int low, int high, int total_size, bool visualize, chrono::steady_clock::time_point start_time, int &pass_count)
+  static void quick_sort_helper(i32* array, int low, int high, int total_size, bool visualize, chrono::steady_clock::time_point start_time, int &pass_count)
   {
     if (low < high) {
       pass_count++;
@@ -386,7 +387,7 @@ namespace sort
     }
   }
 
-  void QuickSort(int32_t* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  void QuickSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     TRACE("Start quick sorting ...\n" << endl);
     int pass_count = 0;

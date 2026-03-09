@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdint>
+#include "base.h"
 #include <vector>
 #include <string>
 #include <chrono>
@@ -16,8 +17,8 @@ struct Config {
   bool is_random = false;
   bool is_sound = false;
   int random_count = 0;
-  int32_t random_min = 0;
-  int32_t random_max = 0;
+  i32 random_min = 0;
+  i32 random_max = 0;
 };
 
 void print_usage(const char* program_name)
@@ -68,8 +69,8 @@ bool parse_arguments(int argc, char **argv, Config &config)
     }
     config.is_random = true;
     config.random_count = stoi(args[2]);
-    config.random_min = static_cast<int32_t>(stoi(args[3]));
-    config.random_max = static_cast<int32_t>(stoi(args[4]));
+    config.random_min = static_cast<i32>(stoi(args[3]));
+    config.random_max = static_cast<i32>(stoi(args[4]));
   } else {
     for (size_t i = 1; i < args.size(); i++) {
       config.raw_elements.push_back(args[i]);
@@ -79,9 +80,9 @@ bool parse_arguments(int argc, char **argv, Config &config)
   return true;
 }
 
-vector<int32_t> prepare_array(const Config &config)
+vector<i32> prepare_array(const Config &config)
 {
-  vector<int32_t> array;
+  vector<i32> array;
 
   if (config.is_random) {
     if (config.random_count <= 0 || config.random_min > config.random_max)
@@ -89,20 +90,20 @@ vector<int32_t> prepare_array(const Config &config)
 
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<int32_t> dis(config.random_min, config.random_max);
+    uniform_int_distribution<i32> dis(config.random_min, config.random_max);
     for (int i = 0; i < config.random_count; i++) {
       array.push_back(dis(gen));
     }
   } else {
     for (const string &s : config.raw_elements) {
-      array.push_back(static_cast<int32_t>(stoi(s)));
+      array.push_back(static_cast<i32>(stoi(s)));
     }
   }
 
   return array;
 }
 
-void execute_sort(const string &algorithm, int32_t *data, int size, bool visualize, chrono::steady_clock::time_point begin)
+void execute_sort(const string &algorithm, i32 *data, int size, bool visualize, chrono::steady_clock::time_point begin)
 {
   if (algorithm == "BubbleSort") {
     sort::BubbleSort(data, size, visualize, begin);
@@ -127,7 +128,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  vector<int32_t> array = prepare_array(config);
+  vector<i32> array = prepare_array(config);
   if (array.empty()) {
     cerr << "Error: Invalid array parameters or empty array" << endl;
     return 1;
@@ -135,7 +136,7 @@ int main(int argc, char** argv)
 
   if (!config.visualize) {
     cout << "Original array: ";
-    for (int32_t val : array) {
+    for (i32 val : array) {
       cout << val << " ";
     }
     cout << "\n\nRunning " << config.algorithm << "..." << endl;
@@ -150,7 +151,7 @@ int main(int argc, char** argv)
 
   if (!config.visualize) {
     cout << "\nSorted: ";
-    for (int32_t val : array) {
+    for (i32 val : array) {
       cout << val << " ";
     }
   } else {

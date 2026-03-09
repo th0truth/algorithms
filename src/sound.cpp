@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdint>
+#include "base.h"
 #include <thread>
 #include <chrono>
 #include <cmath>
@@ -40,7 +41,7 @@ void SortAudio::play_tone(int value, int max_value, int duration_ms)
 
   int sample_rate = 44100;
   int samples = (duration_ms * sample_rate) / 1000;
-  int16_t* buffer = new int16_t[samples];
+  i16* buffer = new i16[samples];
 
   // Generate the sine wave
   for (int i = 0; i < samples; i++) {
@@ -57,7 +58,7 @@ void SortAudio::play_tone(int value, int max_value, int duration_ms)
   }
 
   // Push audio to the sound card
-  SDL_QueueAudio(audioDevice, buffer, samples * sizeof(int16_t));
+  SDL_QueueAudio(audioDevice, buffer, samples * sizeof(i16));
   delete[] buffer;
 
   // Sleep to sync the visualizer with the audio duration
