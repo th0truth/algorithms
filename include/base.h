@@ -1,8 +1,10 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
-#include <math.h>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <random>
+#include <thread>
+#include <chrono>
+#include <cmath>
 
 typedef int8_t i8;
 typedef int16_t i16;
