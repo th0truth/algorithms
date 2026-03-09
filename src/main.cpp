@@ -63,8 +63,8 @@ bool parse_arguments(int argc, char **argv, Config &config)
     }
     config.is_random = true;
     config.random_count = stoi(args[2]);
-    config.random_min = static_cast<i32>(stoi(args[3]));
-    config.random_max = static_cast<i32>(stoi(args[4]));
+    config.random_min = stoi(args[3]);
+    config.random_max = stoi(args[4]);
   } else {
     for (size_t i = 1; i < args.size(); i++) {
       config.raw_elements.push_back(args[i]);
@@ -90,7 +90,7 @@ vector<i32> prepare_array(const Config &config)
     }
   } else {
     for (const string &s : config.raw_elements) {
-      array.push_back(static_cast<i32>(stoi(s)));
+      array.push_back(stoi(s));
     }
   }
 
@@ -142,7 +142,7 @@ int main(int argc, char** argv)
     SortAudio::init();
 
   auto begin = chrono::steady_clock::now();
-  execute_sort(config.algorithm, array.data(), static_cast<int>(array.size()), config.visualize, begin);
+  execute_sort(config.algorithm, array.data(), array.size(), config.visualize, begin);
   auto end = chrono::steady_clock::now();
 
   if (!config.visualize) {
