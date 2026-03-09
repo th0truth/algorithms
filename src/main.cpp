@@ -1,11 +1,4 @@
-#include <iostream>
-#include <cstdint>
 #include "base.h"
-#include <vector>
-#include <string>
-#include <chrono>
-#include <random>
-
 #include "algorithms.h"
 #include "sound.h"
 using namespace std;
@@ -31,6 +24,7 @@ void print_usage(const char* program_name)
   cout << "  SelectionSort   - Selection sort algorithm" << endl;
   cout << "  MergeSort       - Merge sort algorithm" << endl;
   cout << "  QuickSort       - Quick sort algorithm" << endl;
+  cout << "  ShellSort       - Shell sort algorithm" << endl;
   cout << "\nOptions:" << endl;
   cout << "  --visualize     Show visual representation of sorting" << endl;
   cout << "  --sound         Enable sound during visualization" << endl;
@@ -115,6 +109,8 @@ void execute_sort(const string &algorithm, i32 *data, int size, bool visualize, 
     sort::MergeSort(data, size, visualize, begin);
   } else if (algorithm == "QuickSort") {
     sort::QuickSort(data, size, visualize, begin);
+  } else if (algorithm == "ShellSort") {
+    sort::ShellSort(data, size, visualize, begin);
   } else {
     cerr << "Error: Unknown algorithm '" << algorithm << "'" << endl;
   }

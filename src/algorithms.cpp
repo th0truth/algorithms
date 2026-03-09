@@ -398,4 +398,49 @@ namespace sort
     if (visualize)
       draw_state(array, size, start_time);
   }
+
+  void ShellSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  {
+    TRACE("Start SHELL sorting ...\n" << endl);
+    int pass = 0;
+    int total_shifts = 0;
+
+    // Start with a large gap, then reduce it step by step
+    for (int gap = size / 2; gap > 0; gap /= 2) {
+      // Perform a "gapped" insertion sort for this gap size
+      for (int i = gap; i < size; i++) {
+        pass++;
+        TRACE("\tPass " << pass << " (processing element at index " << i << " with gap " << gap << "):" << endl);
+
+        i32 temp = array[i];
+        TRACE("\tCurrent element to insert: " << temp << endl);
+        
+        int j = i;
+        int pass_shifts = 0;
+
+        if (visualize)
+          draw_state(array, size, start_time, i);
+
+        // Shift elements that are greater than temp to make space
+        while (j >= gap && array[j - gap] > temp) {
+          TRACE("\t\tShifting " << array[j - gap] << " from index " << (j - gap) << " to index " << j << endl);
+          
+          array[j] = array[j - gap];
+          j -= gap;
+          pass_shifts++;
+          total_shifts++;
+
+          if (visualize)
+            draw_state(array, size, start_time, j, j + gap);
+        }
+
+        // Place temp in its correct location
+        array[j] = temp;
+      }
+    }
+
+    TRACE("\nTotal passes: " << pass << ", Total shifts: " << total_shifts << endl);
+    if (visualize)
+      draw_state(array, size, start_time);
+  }
 }

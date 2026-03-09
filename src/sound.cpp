@@ -1,9 +1,5 @@
-#include <iostream>
-#include <cstdint>
 #include "base.h"
-#include <thread>
-#include <chrono>
-#include <cmath>
+
 #include <SDL2/SDL.h>
 
 #include "algorithms.h"
