@@ -50,6 +50,79 @@ namespace sort
     }
   }
 
+  static void print_heap_node(i32* array, int size, int index, const string& prefix, bool is_last, int h1, int h2, int h3) {
+    if (index >= size) return;
+
+    cout << prefix;
+    if (index > 0) {
+      cout << (is_last ? "\xe2\x94\x94\xe2\x94\x80\xe2\x94\x80 " : "\xe2\x94\x9c\xe2\x94\x80\xe2\x94\x80 ");
+    }
+
+    if (index == h1 || index == h2 || index == h3) cout << "\033[1;31m";
+    cout << array[index];
+    if (index == h1 || index == h2 || index == h3) cout << "\033[0m";
+    cout << "\n";
+
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    string new_prefix = prefix;
+    if (index > 0) {
+      new_prefix += (is_last ? "    " : "\xe2\x94\x82   ");
+    }
+
+    if (left < size) {
+        bool left_is_last = (right >= size);
+        print_heap_node(array, size, left, new_prefix, left_is_last, h1, h2, h3);
+    }
+    if (right < size) {
+        print_heap_node(array, size, right, new_prefix, true, h1, h2, h3);
+    }
+  }
+
+  static void draw_heap_state(i32* array, int size, chrono::steady_clock::time_point start_time, int h1 = -1, int h2 = -1, int h3 = -1)
+  {
+    cout << "\033[2J\033[H";
+    auto now = chrono::steady_clock::now();
+    auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - start_time).count();
+    
+    cout << "Visualizing Heap Sort Algorithm... [Elapsed Time: " << elapsed << " ms]\n\n";
+
+    int max_val = 1;
+    for (int i = 0; i < size; i++) {
+      if (array[i] > max_val) {
+        max_val = array[i];
+      }
+    }
+
+    cout << "Heap Tree Representation:\n";
+    print_heap_node(array, size, 0, "", true, h1, h2, h3);
+    cout << "\nArray State:\n";
+    for (int i = 0; i < size; i++) {
+      printf("%4d | ", array[i]);
+      if (i == h1 || i == h2 || i == h3) {
+        cout << "\033[1;31m";
+      }
+      int bars = (max(0, array[i]) * 50) / max_val;
+      for (int j = 0; j < bars; j++) {
+        cout << "\xe2\x96\x88";
+      }
+      if (i == h1 || i == h2 || i == h3) {
+        cout << "\033[0m";
+      }
+      cout << "\n";
+    }
+    cout << flush;
+    
+    // If we have a highlighted element (like a swap or comparison), play its tone
+    if (h1 != -1) {
+      SortAudio::play_tone(array[h1], max_val, 30);
+    } else {
+      // Sleep to let the audio play and the frame render at a viewable speed
+      this_thread::sleep_for(chrono::milliseconds(30));
+    }
+  }
+
   void BubbleSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
     TRACE("Start bubble sorting ...\n" << endl);
@@ -529,5 +602,86 @@ namespace sort
     TRACE("\nTotal passes: " << pass << ", Total swaps: " << total_swaps << endl);
     if (visualize)
       draw_state(array, size, start_time);
+  }
+
+  static void heapify(i32* array, int size, int index, bool visualize, chrono::steady_clock::time_point start_time, int& total_swaps)
+  {
+    int largest = index;
+
+    // Initialize formules for left and right child
+    int l = 2 * index + 1;
+    int r = 2 * index + 2;
+
+    // If left child is larger than root
+    if (l < size) {
+      TRACE("\t\tComparing " << array[l] << " (left child) and " << array[largest] << " (largest so far)");
+      if (visualize) draw_heap_state(array, size, start_time, l, largest);
+      if (array[l] > array[largest]) {
+        largest = l;
+      }
+      TRACE(endl);
+    }
+
+    // If right child is larger than largest so far
+    if (r < size) {
+      TRACE("\t\tComparing " << array[r] << " (right child) and " << array[largest] << " (largest so far)");
+      if (visualize) draw_heap_state(array, size, start_time, r, largest);
+      if (array[r] > array[largest]) {
+        largest = r;
+      }
+      TRACE(endl);
+    }
+
+    if (largest != index) {
+      TRACE("\t\tSwapping " << array[index] << " and " << array[largest] << endl);
+      swap(array[index], array[largest]);
+      total_swaps++;
+      if (visualize) draw_heap_state(array, size, start_time, index, largest);
+
+      // Recursively heapify the affected sub-tree
+      heapify(array, size, largest, visualize, start_time, total_swaps);
+    }
+  }
+
+  void HeapSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  {
+    TRACE("Start heap sorting ...\n" << endl);
+    int total_swaps = 0;
+
+    TRACE("\tBuilding heap..." << endl);
+    // Build heap (rearrange vector)
+    for (int i = size / 2 - 1; i >= 0; i--) {
+      TRACE("\tHeapifying index " << i << endl);
+      heapify(array, size, i, visualize, start_time, total_swaps);
+    }
+
+    TRACE("\tHeap built. Array now: ");
+    for (int k = 0; k < size; k++) {
+      TRACE(array[k] << " ");
+    }
+    TRACE(endl << endl);
+
+    // One by one extract an element from heap
+    for (int i = size - 1; i > 0; i--) {
+      TRACE("\tExtracting element " << array[0] << " to position " << i << " (swapping with " << array[i] << ")" << endl);
+      // Move current root to end
+      swap(array[0], array[i]);
+      total_swaps++;
+      if (visualize) draw_heap_state(array, size, start_time, 0, i);
+
+      // Call max heapify on the reduced heap
+      TRACE("\tHeapifying reduced heap (size " << i << ") at index 0" << endl);
+      heapify(array, i, 0, visualize, start_time, total_swaps);
+
+      TRACE("\tArray now: ");
+      for (int k = 0; k < size; k++) {
+        TRACE(array[k] << " ");
+      }
+      TRACE(endl << endl);
+    }
+
+    TRACE("\nTotal swaps: " << total_swaps << endl);
+    if (visualize)
+      draw_heap_state(array, size, start_time);
   }
 }

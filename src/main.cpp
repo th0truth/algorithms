@@ -21,6 +21,7 @@ void print_usage(const char* program_name)
   cout << "\nAvailable algorithms:" << endl;
   cout << "  BubbleSort      - Bubble sort algorithm" << endl;
   cout << "  CocktailSort    - Cocktail sort algorithm" << endl;
+  cout << "  HeapSort        - Heap sort algorithm" << endl;
   cout << "  InsertionSort   - Insertion sort algorithm" << endl;
   cout << "  SelectionSort   - Selection sort algorithm" << endl;
   cout << "  MergeSort       - Merge sort algorithm" << endl;
@@ -104,6 +105,8 @@ void execute_sort(const string &algorithm, i32 *data, int size, bool visualize, 
     sort::BubbleSort(data, size, visualize, begin);
   } else if (algorithm == "CocktailSort") {
     sort::CocktailSort(data, size, visualize, begin);
+  } else if (algorithm == "HeapSort") {
+    sort::HeapSort(data, size, visualize, begin);
   } else if (algorithm == "InsertionSort") {
     sort::InsertionSort(data, size, visualize, begin);
   } else if (algorithm == "SelectionSort") {
