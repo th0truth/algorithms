@@ -11,13 +11,15 @@ using namespace std;
 
 namespace sort
 {
+  static string current_alg_name;
+
   static void draw_state(i32* array, int size, chrono::steady_clock::time_point start_time, int h1 = -1, int h2 = -1, int h3 = -1)
   {
     cout << "\033[2J\033[H";
     auto now = chrono::steady_clock::now();
     auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - start_time).count();
     
-    cout << "Visualizing Sorting Algorithm... [Elapsed Time: " << elapsed << " ms]\n\n";
+    cout << "\"" << current_alg_name << "\" Visualizing Sorting Algorithm... [Elapsed Time: " << elapsed << " ms]\n\n";
     
     int max_val = 1;
     for (int i = 0; i < size; i++) {
@@ -86,7 +88,7 @@ namespace sort
     auto now = chrono::steady_clock::now();
     auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - start_time).count();
     
-    cout << "Visualizing Heap Sort Algorithm... [Elapsed Time: " << elapsed << " ms]\n\n";
+    cout << "\"" << current_alg_name << "\" Visualizing Sorting Algorithm... [Elapsed Time: " << elapsed << " ms]\n\n";
 
     int max_val = 1;
     for (int i = 0; i < size; i++) {
@@ -125,6 +127,7 @@ namespace sort
 
   void BubbleSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
+    current_alg_name = "Bubble Sort";
     TRACE("Start bubble sorting ...\n" << endl);
     int pass = 0;
     int total_swaps = 0;
@@ -174,6 +177,7 @@ namespace sort
 
   void InsertionSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
+    current_alg_name = "Insertion Sort";
     TRACE("Start INSERTION sorting ...\n" << endl);
     int pass = 0;
     int total_shifts = 0;
@@ -235,6 +239,7 @@ namespace sort
 
   void SelectionSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
+    current_alg_name = "Selection Sort";
     TRACE("Start SELECTION sorting ...\n" << endl);
     int pass = 0;
     int total_swaps = 0;
@@ -400,6 +405,7 @@ namespace sort
 
   void MergeSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
+    current_alg_name = "Merge Sort";
     TRACE("Start merge sorting ...\n" << endl);
     merge_count = 0;
     
@@ -462,6 +468,7 @@ namespace sort
 
   void QuickSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
+    current_alg_name = "Quick Sort";
     TRACE("Start quick sorting ...\n" << endl);
     int pass_count = 0;
     
@@ -474,6 +481,7 @@ namespace sort
 
   void ShellSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
+    current_alg_name = "Shell Sort";
     TRACE("Start SHELL sorting ...\n" << endl);
     int pass = 0;
     int total_shifts = 0;
@@ -519,6 +527,7 @@ namespace sort
 
   void CocktailSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
+    current_alg_name = "Cocktail Sort";
     TRACE("Start cocktail sorting ...\n" << endl);
     int start = 0;
     int end = size - 1;
@@ -645,6 +654,7 @@ namespace sort
 
   void HeapSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
   {
+    current_alg_name = "Heap Sort";
     TRACE("Start heap sorting ...\n" << endl);
     int total_swaps = 0;
 
