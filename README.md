@@ -12,10 +12,13 @@ A real-time sorting algorithm visualizer with audio feedback, built in C++.
 | Algorithm | Time Complexity | Space Complexity |
 |-----------|----------------|------------------|
 | BubbleSort | O(n²) | O(1) |
+| CocktailSort | O(n²) | O(1) |
+| HeapSort | O(n log n) | O(1) |
 | InsertionSort | O(n²) | O(1) |
-| SelectionSort | O(n²) | O(1) |
 | MergeSort | O(n log n) | O(n) |
 | QuickSort | O(n log n) avg | O(log n) |
+| SelectionSort | O(n²) | O(1) |
+| ShellSort | O(n log n) | O(1) |
 
 ### Visualization Mode
 Watch sorting algorithms in action with ASCII bar charts that animate in real-time. Each comparison and swap is visually highlighted, making it easy to understand how each algorithm works.
@@ -87,6 +90,7 @@ make clean
 algorithms/
 ├── include/
 │   ├── algorithms.h    # Algorithm declarations
+│   ├── base.h          # Base definitions and types
 │   └── sound.h         # Audio system
 ├── src/
 │   ├── main.cpp        # Entry point & CLI
