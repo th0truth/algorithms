@@ -443,4 +443,91 @@ namespace sort
     if (visualize)
       draw_state(array, size, start_time);
   }
+
+  void CocktailSort(i32* array, int size, bool visualize, chrono::steady_clock::time_point start_time)
+  {
+    TRACE("Start cocktail sorting ...\n" << endl);
+    int start = 0;
+    int end = size - 1;
+    bool swapped = true;
+    int pass = 0;
+    int total_swaps = 0;
+
+    while (swapped) {
+      swapped = false;
+      pass++;
+      TRACE("\tPass " << pass << " (forward, comparing elements from index " << start << " to " << end - 1 << "):" << endl);
+      int pass_swaps = 0;
+
+      // loop from left to right same as the bubble sort
+      for (int i = start; i < end; i++) {
+        TRACE("\t\tComparing " << array[i] << " and " << array[i+1]);
+        if (visualize) {
+          draw_state(array, size, start_time, i, i+1);
+        }
+
+        if (array[i] > array[i + 1]) {
+          TRACE(" -> Swapping");
+          swap(array[i], array[i + 1]);
+          swapped = true;
+          pass_swaps++;
+          total_swaps++;
+          if (visualize) {
+            draw_state(array, size, start_time, i, i+1);
+          }
+        }
+        TRACE(endl);
+      }
+
+      TRACE("\tForward pass swaps: " << pass_swaps << endl);
+
+      // if nothing moved, then array is sorted.
+      if (!swapped) {
+        TRACE("\tNo swaps made in forward pass. Array is sorted!" << endl);
+        break;
+      }
+      
+      // otherwise, reset the swapped flag so that it
+      // can be used in the next stage
+      swapped = false;
+
+      --end;
+      pass_swaps = 0;
+
+      TRACE("\tPass " << pass << " (backward, comparing elements from index " << end - 1 << " down to " << start << "):" << endl);
+
+      // from right to left, doing the same comparison as in the previous stage
+      for (int i = end - 1; i >= start; i--) {
+        TRACE("\t\tComparing " << array[i] << " and " << array[i+1]);
+        if (visualize) {
+          draw_state(array, size, start_time, i, i+1);
+        }
+
+        if (array[i] > array[i + 1]) {
+          TRACE(" -> Swapping");
+          swap(array[i], array[i + 1]);
+          swapped = true;
+          pass_swaps++;
+          total_swaps++;
+          if (visualize) {
+            draw_state(array, size, start_time, i, i+1);
+          }
+        }
+        TRACE(endl);
+      }
+
+      TRACE("\tBackward pass swaps: " << pass_swaps << endl);
+      ++start;
+
+      TRACE("\tArray now: ");
+      for (int k = 0; k < size; k++) {
+        TRACE(array[k] << " ");
+      }
+      TRACE(endl << endl);
+    }
+
+    TRACE("\nTotal passes: " << pass << ", Total swaps: " << total_swaps << endl);
+    if (visualize)
+      draw_state(array, size, start_time);
+  }
 }
