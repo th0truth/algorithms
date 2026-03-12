@@ -56,12 +56,12 @@ namespace sort
     if (index >= size) return;
 
     cout << prefix;
-    if (index > 0) {
+    if (index > 0)
       cout << (is_last ? "\xe2\x94\x94\xe2\x94\x80\xe2\x94\x80 " : "\xe2\x94\x9c\xe2\x94\x80\xe2\x94\x80 ");
-    }
 
     if (index == h1 || index == h2 || index == h3) cout << "\033[1;31m";
     cout << array[index];
+
     if (index == h1 || index == h2 || index == h3) cout << "\033[0m";
     cout << "\n";
 
@@ -69,17 +69,15 @@ namespace sort
     int right = 2 * index + 2;
 
     string new_prefix = prefix;
-    if (index > 0) {
+    if (index > 0)
       new_prefix += (is_last ? "    " : "\xe2\x94\x82   ");
-    }
 
     if (left < size) {
         bool left_is_last = (right >= size);
         print_heap_node(array, size, left, new_prefix, left_is_last, h1, h2, h3);
     }
-    if (right < size) {
-        print_heap_node(array, size, right, new_prefix, true, h1, h2, h3);
-    }
+    if (right < size)
+      print_heap_node(array, size, right, new_prefix, true, h1, h2, h3);
   }
 
   static void draw_heap_state(i32* array, int size, chrono::steady_clock::time_point start_time, int h1 = -1, int h2 = -1, int h3 = -1)
@@ -92,9 +90,8 @@ namespace sort
 
     int max_val = 1;
     for (int i = 0; i < size; i++) {
-      if (array[i] > max_val) {
+      if (array[i] > max_val)
         max_val = array[i];
-      }
     }
 
     cout << "Heap Tree Representation:\n";
@@ -109,9 +106,8 @@ namespace sort
       for (int j = 0; j < bars; j++) {
         cout << "\xe2\x96\x88";
       }
-      if (i == h1 || i == h2 || i == h3) {
+      if (i == h1 || i == h2 || i == h3) 
         cout << "\033[0m";
-      }
       cout << "\n";
     }
     cout << flush;
@@ -140,9 +136,8 @@ namespace sort
 
       for (int j = 0; j < size - i - 1; j++) {
         TRACE("\t\tComparing " << array[j] << " and " << array[j+1]);
-        if (visualize) {
+        if (visualize)
           draw_state(array, size, start_time, j, j+1);
-        }
 
         if (array[j] > array[j+1]) {
           TRACE(" -> Swapping");
@@ -150,9 +145,8 @@ namespace sort
           swapped = true;
           pass_swaps++;
           total_swaps++;
-          if (visualize) {
+          if (visualize)
             draw_state(array, size, start_time, j, j+1);
-          }
         }
         TRACE(endl);
       }
