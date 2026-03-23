@@ -8,7 +8,8 @@
 
 namespace search
 {
-  int LinearSearch(i32* array, int size, i32 target, bool visualize, std::chrono::steady_clock::time_point start_time) {
+  int LinearSearch(i32* array, int size, i32 target, bool visualize, std::chrono::steady_clock::time_point start_time)
+  {
     for (int i = 0; i < size; i++) {
       TRACE(visualize, "Checking index " << i << ": " << array[i] << " == " << target << std::endl);
       

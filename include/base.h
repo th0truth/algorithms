@@ -1,21 +1,13 @@
-#include <iostream>
+#pragma once
 #include <vector>
 #include <string>
-#include <random>
-#include <thread>
+#include <iostream>
+#include <algorithm>
 #include <chrono>
-#include <cmath>
+#include <cstdint>
 
-typedef int8_t i8;
-typedef int16_t i16;
 typedef int32_t i32;
-typedef int64_t i64;
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
+typedef int16_t i16;
 
-typedef i8 b8;
-typedef i32 b32;
-
-typedef float f32;
+// Global trace macro
+#define TRACE(visualize, x) do { if (!visualize) { std::cout << x; } } while(0)

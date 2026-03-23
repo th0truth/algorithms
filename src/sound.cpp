@@ -1,9 +1,9 @@
 #include "base.h"
-
 #include <SDL2/SDL.h>
-
-#include "algorithms.h"
 #include "sound.h"
+#include <cmath>
+#include <chrono>
+#include <thread>
 using namespace std;
 
 // Initialize SortAudio for algorithms
