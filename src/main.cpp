@@ -14,6 +14,7 @@ using namespace std;
 
 struct Config {
   string algorithm;
+  string sort_algorithm;
   vector<string> raw_elements;
   i32 target = 0;
   bool target_set = false;
@@ -27,11 +28,22 @@ struct Config {
 
 void print_usage(const char* program_name)
 {
-  cout << "Usage: " << program_name << " <algorithm> [flags] <elements...>" << endl;
-  cout << "       " << program_name << " <algorithm> [flags] random <count> <min> <max>" << endl;
-  cout << "       " << program_name << " LinearSearch <target> [flags] <elements...>" << endl;
-  cout << "\nFlags: --visualize, --sound" << endl;
-  cout << "Algorithms: BubbleSort, InsertionSort, SelectionSort, MergeSort, QuickSort, ShellSort, CocktailSort, HeapSort, LinearSearch" << endl;
+  cout << "\033[1;36mAlgorithm Visualizer CLI v2.0\033[0m\n";
+  cout << "--------------------------------------------------\n";
+  cout << "Usage:\n";
+  cout << "  " << program_name << " <algorithm> [flags] <elements...>\n";
+  cout << "  " << program_name << " BinarySearch <target> --sort <sort_alg> [flags] <elements...>\n";
+  cout << "  " << program_name << " <algorithm> --random <count> [min] [max] [flags]\n\n";
+  cout << "Algorithms:\n";
+  cout << "  - Sorts:   BubbleSort, InsertionSort, SelectionSort, MergeSort, \n";
+  cout << "             QuickSort, ShellSort, CocktailSort, HeapSort\n";
+  cout << "  - Search:  LinearSearch, BinarySearch\n\n";
+  cout << "Flags:\n";
+  cout << "  --visualize    Enable step-by-step visualization\n";
+  cout << "  --sound        Enable audio feedback\n";
+  cout << "  --sort <alg>   Sort data before searching (required for BinarySearch)\n";
+  cout << "  --random <n>   Generate 'n' random elements\n";
+  cout << "--------------------------------------------------\n";
 }
 
 int main(int argc, char* argv[])
@@ -51,24 +63,41 @@ int main(int argc, char* argv[])
       config.visualize = true;
     } else if (arg == "--sound") {
       config.is_sound = true;
-    } else if (arg == "random") {
-      config.is_random = true;
-      if (i + 3 < argc) {
-        config.random_count = stoi(argv[++i]);
-        config.random_min = stoi(argv[++i]);
-        config.random_max = stoi(argv[++i]);
+    } else if (arg == "--sort") {
+      if (i + 1 < argc) {
+        config.sort_algorithm = argv[++i];
       } else {
-        cerr << "Error: random requires count, min, and max" << endl;
+        cerr << "Error: --sort requires an algorithm name" << endl;
         return 1;
       }
+    } else if (arg == "random" || arg == "--random") {
+      config.is_random = true;
+      if (i + 1 < argc && isdigit(argv[i+1][0])) {
+        config.random_count = stoi(argv[++i]);
+        if (i + 1 < argc && isdigit(argv[i+1][0])) {
+          config.random_min = stoi(argv[++i]);
+          if (i + 1 < argc && isdigit(argv[i+1][0])) {
+            config.random_max = stoi(argv[++i]);
+          } else {
+            config.random_max = 100;
+          }
+        } else {
+          config.random_min = 1;
+          config.random_max = 100;
+        }
+      } else {
+        config.random_count = 10;
+        config.random_min = 1;
+        config.random_max = 100;
+      }
     } else {
-      // If it's LinearSearch and we haven't set a target yet, the first non-flag is the target
-      if (config.algorithm == "LinearSearch" && !config.target_set) {
+      // If it's LinearSearch or BinarySearch and we haven't set a target yet, the first non-flag is the target
+      if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch") && !config.target_set) {
         try {
           config.target = stoi(arg);
           config.target_set = true;
         } catch (...) {
-          cerr << "Error: Invalid target '" << arg << "' for LinearSearch" << endl;
+          cerr << "Error: Invalid target '" << arg << "' for " << config.algorithm << endl;
           return 1;
         }
       } else {
@@ -77,8 +106,8 @@ int main(int argc, char* argv[])
     }
   }
 
-  if (config.algorithm == "LinearSearch" && !config.target_set) {
-    cerr << "Error: LinearSearch requires a target value" << endl;
+  if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch") && !config.target_set) {
+    cerr << "Error: " << config.algorithm << " requires a target value" << endl;
     print_usage(argv[0]);
     return 1;
   }
@@ -115,26 +144,50 @@ int main(int argc, char* argv[])
   int size = data.size();
   auto start_time = chrono::steady_clock::now();
 
+  // 1. Run Sorting if requested via --sort or if it's the main algorithm
+  string active_sort = "";
+  if (!config.sort_algorithm.empty()) {
+    active_sort = config.sort_algorithm;
+  } else if (config.algorithm.find("Sort") != string::npos) {
+    active_sort = config.algorithm;
+  }
+
+  if (!active_sort.empty()) {
+    if (active_sort == "BubbleSort") {
+      sort::BubbleSort(array, size, config.visualize, start_time);
+    } else if (active_sort == "InsertionSort") {
+      sort::InsertionSort(array, size, config.visualize, start_time);
+    } else if (active_sort == "SelectionSort") {
+      sort::SelectionSort(array, size, config.visualize, start_time);
+    } else if (active_sort == "MergeSort") {
+      sort::MergeSort(array, size, config.visualize, start_time);
+    } else if (active_sort == "QuickSort") {
+      sort::QuickSort(array, size, config.visualize, start_time);
+    } else if (active_sort == "ShellSort") {
+      sort::ShellSort(array, size, config.visualize, start_time);
+    } else if (active_sort == "CocktailSort") {
+      sort::CocktailSort(array, size, config.visualize, start_time);
+    } else if (active_sort == "HeapSort") {
+      sort::HeapSort(array, size, config.visualize, start_time);
+    } else if (config.algorithm.find("Sort") != string::npos) {
+       cerr << "Unknown sorting algorithm: " << active_sort << endl;
+       if (config.is_sound) SortAudio::cleanup();
+       return 1;
+    }
+  }
+
+  // 2. Run Search if requested
   int search_result = -1;
-  if (config.algorithm == "BubbleSort") {
-    sort::BubbleSort(array, size, config.visualize, start_time);
-  } else if (config.algorithm == "InsertionSort") {
-    sort::InsertionSort(array, size, config.visualize, start_time);
-  } else if (config.algorithm == "SelectionSort") {
-    sort::SelectionSort(array, size, config.visualize, start_time);
-  } else if (config.algorithm == "MergeSort") {
-    sort::MergeSort(array, size, config.visualize, start_time);
-  } else if (config.algorithm == "QuickSort") {
-    sort::QuickSort(array, size, config.visualize, start_time);
-  } else if (config.algorithm == "ShellSort") {
-    sort::ShellSort(array, size, config.visualize, start_time);
-  } else if (config.algorithm == "CocktailSort") {
-    sort::CocktailSort(array, size, config.visualize, start_time);
-  } else if (config.algorithm == "HeapSort") {
-    sort::HeapSort(array, size, config.visualize, start_time);
-  } else if (config.algorithm == "LinearSearch") {
+  bool is_search = false;
+  if (config.algorithm == "LinearSearch") {
     search_result = search::LinearSearch(array, size, config.target, config.visualize, start_time);
-  } else {
+    is_search = true;
+  } else if (config.algorithm == "BinarySearch") {
+    search_result = search::BinarySearch(array, size, config.target, config.visualize, start_time);
+    is_search = true;
+  }
+
+  if (!is_search && config.algorithm.find("Sort") == string::npos) {
     cerr << "Unknown algorithm: " << config.algorithm << endl;
     if (config.is_sound) SortAudio::cleanup();
     return 1;
@@ -144,14 +197,19 @@ int main(int argc, char* argv[])
   auto duration = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
 
   if (!config.visualize) {
-    if (config.algorithm == "LinearSearch") {
-      if (search_result != -1) cout << "\nFound target " << config.target << " at index " << search_result << endl;
-      else cout << "\nTarget " << config.target << " not found" << endl;
+    if (is_search) {
+      if (search_result != -1)
+        cout << "\nFound target " << config.target << " at index " << search_result << endl;
+      else
+        cout << "\nTarget " << config.target << " not found" << endl;
     } else {
       cout << "\nSorted array: ";
-      for (int i = 0; i < size; i++) {
+      
+      for (int i = 0; i < size; i++)
+      {
         cout << array[i] << " ";
       }
+      
       cout << endl;
     }
   }
