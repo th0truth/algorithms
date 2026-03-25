@@ -1,10 +1,6 @@
 #include "base.h"
-
-#include <chrono>
-#include <thread>
-
-#include "sound.h"
 #include "utils.h"
+#include "sound.h"
 using namespace std;
 
 namespace cpu::search {

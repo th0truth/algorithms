@@ -1,14 +1,7 @@
-#include <iostream>
-#include <cstdint>
-#include <thread>
-#include <chrono>
-
 #include "base.h"
-
-#include "sort.h"
-#include "sound.h"
 #include "utils.h"
-
+#include "sound.h"
+#include "sort.h"
 using namespace std;
 
 namespace cpu::sort {

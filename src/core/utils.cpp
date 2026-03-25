@@ -1,9 +1,6 @@
-#include <iostream>
-#include <chrono>
-#include <thread>
 #include "utils.h"
 #include "sound.h"
-
+#include <thread>
 using namespace std;
 
 void Viz::draw_state(const string& current_alg_name, i32* array, int size, chrono::steady_clock::time_point start_time, int h1, int h2, int h3)

@@ -1,8 +1,6 @@
 #include "base.h"
-#include <SDL2/SDL.h>
 #include "sound.h"
-#include <cmath>
-#include <chrono>
+#include <SDL2/SDL.h>
 #include <thread>
 using namespace std;
 
