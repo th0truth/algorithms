@@ -5,7 +5,6 @@
 #include "search.h"
 #include "search.cuh"
 #include "config.h"
-#include "benchmark.h"
 
 using namespace std;
 
@@ -18,12 +17,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  if (config.algorithm == "BenchmarkLinearSearch") {
-    run_benchmark();
-    return 0;
-  }
-
-  if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch" || config.algorithm == "GpuLinearSearch") && !config.target_set) {
+  if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch" || config.algorithm == "GpuLinearSearch" || config.algorithm == "GpuBinarySearch") && !config.target_set) {
     cerr << "Error: " << config.algorithm << " requires a target value" << endl;
     Config::print_usage(argv[0]);
     return 1;
@@ -105,6 +99,9 @@ int main(int argc, char** argv)
   } else if (config.algorithm == "GpuLinearSearch") {
     search_result = gpu::search::LinearSearch(array, size, config.target);
     is_search = true;
+  } else if (config.algorithm == "GpuBinarySearch") {
+    search_result = gpu::search::BinarySearch(array, size, config.target);
+    is_search = true;
   }
 
   if (!is_search && config.algorithm.find("Sort") == string::npos) {
@@ -114,7 +111,8 @@ int main(int argc, char** argv)
   }
 
   auto end_time = chrono::steady_clock::now();
-  auto duration = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+  auto duration_ns = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();
+  double duration_s = duration_ns / 1e9;
 
   if (!config.visualize) {
     if (is_search) {
@@ -129,7 +127,7 @@ int main(int argc, char** argv)
     }
   }
   
-  cout << "\nExecution time: " << duration << " ns" << endl;
+  cout << "\nExecution time: " << duration_ns << " ns (" << fixed << duration_s << " s)" << endl;
 
   if (config.is_sound) {
     SortAudio::cleanup();
