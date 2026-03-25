@@ -3,105 +3,29 @@
 #include "utils.h"
 #include "sort.h"
 #include "search.h"
+#include "search.cuh"
+#include "config.h"
+#include "benchmark.h"
+
 using namespace std;
 
-struct Config {
-  string algorithm;
-  string sort_algorithm;
-  vector<string> raw_elements;
-  i32 target = 0;
-  bool target_set = false;
-  bool visualize = false;
-  bool is_random = false;
-  bool is_sound = false;
-  int random_count = 0;
-  i32 random_min = 0;
-  i32 random_max = 0;
-};
-
-void print_usage(const char* program_name)
+int main(int argc, char** argv)
 {
-  cout << "\033[1;36mAlgorithm Visualizer CLI v2.0\033[0m\n";
-  cout << "--------------------------------------------------\n";
-  cout << "Usage:\n";
-  cout << "  " << program_name << " <algorithm> [flags] <elements...>\n";
-  cout << "  " << program_name << " BinarySearch <target> --sort <sort_alg> [flags] <elements...>\n";
-  cout << "  " << program_name << " <algorithm> --random <count> [min] [max] [flags]\n\n";
-  cout << "Algorithms:\n";
-  cout << "  - Sorts:   BubbleSort, InsertionSort, SelectionSort, MergeSort, \n";
-  cout << "             QuickSort, ShellSort, CocktailSort, HeapSort\n";
-  cout << "  - Search:  LinearSearch, BinarySearch\n\n";
-  cout << "Flags:\n";
-  cout << "  --visualize    Enable step-by-step visualization\n";
-  cout << "  --sound        Enable audio feedback\n";
-  cout << "  --sort <alg>   Sort data before searching (required for BinarySearch)\n";
-  cout << "  --random <n>   Generate 'n' random elements\n";
-  cout << "--------------------------------------------------\n";
-}
+  Config config = Config::parse(argc, argv);
 
-int main(int argc, char* argv[])
-{
-  if (argc < 2) {
-    print_usage(argv[0]);
+  if (config.algorithm.empty()) {
+    Config::print_usage(argv[0]);
     return 1;
   }
 
-  Config config;
-  config.algorithm = argv[1];
-
-  for (int i = 2; i < argc; i++) {
-    string arg = argv[i];
-    
-    if (arg == "--visualize") {
-      config.visualize = true;
-    } else if (arg == "--sound") {
-      config.is_sound = true;
-    } else if (arg == "--sort") {
-      if (i + 1 < argc) {
-        config.sort_algorithm = argv[++i];
-      } else {
-        cerr << "Error: --sort requires an algorithm name" << endl;
-        return 1;
-      }
-    } else if (arg == "random" || arg == "--random") {
-      config.is_random = true;
-      if (i + 1 < argc && isdigit(argv[i+1][0])) {
-        config.random_count = stoi(argv[++i]);
-        if (i + 1 < argc && isdigit(argv[i+1][0])) {
-          config.random_min = stoi(argv[++i]);
-          if (i + 1 < argc && isdigit(argv[i+1][0])) {
-            config.random_max = stoi(argv[++i]);
-          } else {
-            config.random_max = 100;
-          }
-        } else {
-          config.random_min = 1;
-          config.random_max = 100;
-        }
-      } else {
-        config.random_count = 10;
-        config.random_min = 1;
-        config.random_max = 100;
-      }
-    } else {
-      // If it's LinearSearch or BinarySearch and we haven't set a target yet, the first non-flag is the target
-      if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch") && !config.target_set) {
-        try {
-          config.target = stoi(arg);
-          config.target_set = true;
-        } catch (...) {
-          cerr << "Error: Invalid target '" << arg << "' for " << config.algorithm << endl;
-          return 1;
-        }
-      } else {
-        config.raw_elements.push_back(arg);
-      }
-    }
+  if (config.algorithm == "BenchmarkLinearSearch") {
+    run_benchmark();
+    return 0;
   }
 
-  if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch") && !config.target_set) {
+  if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch" || config.algorithm == "GpuLinearSearch") && !config.target_set) {
     cerr << "Error: " << config.algorithm << " requires a target value" << endl;
-    print_usage(argv[0]);
+    Config::print_usage(argv[0]);
     return 1;
   }
 
@@ -178,6 +102,9 @@ int main(int argc, char* argv[])
   } else if (config.algorithm == "BinarySearch") {
     search_result = cpu::search::BinarySearch(array, size, config.target, config.visualize, start_time);
     is_search = true;
+  } else if (config.algorithm == "GpuLinearSearch") {
+    search_result = gpu::search::LinearSearch(array, size, config.target);
+    is_search = true;
   }
 
   if (!is_search && config.algorithm.find("Sort") == string::npos) {
@@ -197,12 +124,7 @@ int main(int argc, char* argv[])
         cout << "\nTarget " << config.target << " not found" << endl;
     } else {
       cout << "\nSorted array: ";
-      
-      for (int i = 0; i < size; i++)
-      {
-        cout << array[i] << " ";
-      }
-      
+      for (int i = 0; i < size; i++) cout << array[i] << " ";
       cout << endl;
     }
   }

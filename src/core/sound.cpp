@@ -4,6 +4,8 @@
 #include <thread>
 using namespace std;
 
+static SDL_AudioDeviceID audioDevice;
+
 // Initialize SortAudio for algorithms
 void SortAudio::init()
 {
