@@ -1,8 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
 
-static SDL_AudioDeviceID audioDevice;
-
 class SortAudio {
   public:
     static void init();

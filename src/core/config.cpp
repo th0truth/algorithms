@@ -13,8 +13,7 @@ void Config::print_usage(const char* program_name)
   cout << "Algorithms:\n";
   cout << "  - Sorts:   BubbleSort, InsertionSort, SelectionSort, MergeSort, \n";
   cout << "             QuickSort, ShellSort, CocktailSort, HeapSort\n";
-  cout << "  - Search:  LinearSearch, BinarySearch, GpuLinearSearch\n";
-  cout << "  - Bench:   BenchmarkLinearSearch\n\n";
+  cout << "  - Search:  LinearSearch, BinarySearch, GpuLinearSearch, GpuBinarySearch\n\n";
   cout << "Flags:\n";
   cout << "  --visualize    Enable step-by-step visualization\n";
   cout << "  --sound        Enable audio feedback\n";
@@ -62,7 +61,7 @@ Config Config::parse(int argc, char** argv)
         config.random_max = 100;
       }
     } else {
-      if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch" || config.algorithm == "GpuLinearSearch") && !config.target_set) {
+      if ((config.algorithm == "LinearSearch" || config.algorithm == "BinarySearch" || config.algorithm == "GpuLinearSearch" || config.algorithm == "GpuBinarySearch") && !config.target_set) {
         try {
           config.target = stoi(arg);
           config.target_set = true;
