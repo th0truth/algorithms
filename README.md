@@ -21,8 +21,7 @@ CUDA is a parallel computing platform and programming model created by NVIDIA. I
 *   **CPU (Central Processing Unit):** Designed for complex logic and serial tasks. It has a few powerful cores optimized for sequential serial processing.
 *   **GPU (Graphics Processing Unit):** Designed for data-parallel tasks. It has thousands of smaller, more efficient cores designed for handling multiple tasks simultaneously.
 
-![CPU vs GPU](https://developer.nvidia.com/sites/default/files/akamai/cuda/images/CPUGPU800.png)
-*Image Source: NVIDIA*
+![CPU vs GPU](https://media.licdn.com/dms/image/v2/D4D12AQEpbXYIppRJmw/article-cover_image-shrink_720_1280/B4DZZgRxPuH4AI-/0/1745371993405?e=2147483647&v=beta&t=WGF2Pysnp0CYNmY7nisWqxwW478ROK0gi2zeAO8IkIM)
 
 ---
 
