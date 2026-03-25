@@ -11,12 +11,12 @@ namespace gpu {
      * @brief CUDA-accelerated search.
      * Handles data transfer and kernel execution.
     */
-    int LinearSearch(const i32* array, int size, i32 target);
+    int LinearSearch(i32* array, int size, i32 target, bool visualize = false, std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now());
 
     /**
      * @brief CUDA-accelerated binary search.
     */
-    int BinarySearch(const i32* array, int size, i32 target);
+    int BinarySearch(i32* array, int size, i32 target, bool visualize = false, std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now());
 
   }
 }

@@ -1,4 +1,5 @@
 #include "search.cuh"
+#include "utils.h"
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
 using namespace std;
@@ -65,7 +66,11 @@ namespace gpu {
      * Host wrapper for GPU Linear Search.
      * Manages device memory and kernel execution configuration.
      */
-    int LinearSearch(const i32* array, int size, i32 target) {
+    int LinearSearch(i32* array, int size, i32 target, bool visualize, std::chrono::steady_clock::time_point start_time) {
+      if (visualize) {
+        Viz::draw_state("Gpu Linear Search", array, size, start_time);
+      }
+
       i32 *vram_array;
       int *vram_result;
       int h_result = size + 1;
@@ -90,13 +95,21 @@ namespace gpu {
       cudaFree(vram_array);
       cudaFree(vram_result);
 
-      return (h_result > size) ? -1 : h_result;
+      int final_result = (h_result > size) ? -1 : h_result;
+      if (visualize && final_result != -1) {
+        Viz::draw_state("Gpu Linear Search", array, size, start_time, final_result);
+      }
+      return final_result;
     }
 
     /**
      * Host wrapper for GPU Binary Search.
      */
-    int BinarySearch(const i32* array, int size, i32 target) {
+    int BinarySearch(i32* array, int size, i32 target, bool visualize, std::chrono::steady_clock::time_point start_time) {
+      if (visualize) {
+        Viz::draw_state("Gpu Binary Search", array, size, start_time, 0, size / 2, size - 1);
+      }
+
       i32 *vram_array;
       int *vram_result;
       int h_result = size + 1;
@@ -119,7 +132,11 @@ namespace gpu {
       cudaFree(vram_array);
       cudaFree(vram_result);
 
-      return (h_result > size) ? -1 : h_result;
+      int final_result = (h_result > size) ? -1 : h_result;
+      if (visualize && final_result != -1) {
+        Viz::draw_state("Gpu Binary Search", array, size, start_time, final_result);
+      }
+      return final_result;
     }
   }
 }
