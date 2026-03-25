@@ -3,8 +3,7 @@
 
 static SDL_AudioDeviceID audioDevice;
 
-class SortAudio
-{
+class SortAudio {
   public:
     static void init();
     static void cleanup();

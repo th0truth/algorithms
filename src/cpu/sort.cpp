@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cstdint>
-#include "base.h"
 #include <thread>
 #include <chrono>
+
+#include "base.h"
 
 #include "sort.h"
 #include "sound.h"
@@ -10,8 +11,7 @@
 
 using namespace std;
 
-namespace sort
-{
+namespace cpu::sort {
   static string current_alg_name;
   static int merge_count = 0;
 

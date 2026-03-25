@@ -1,9 +1,9 @@
 TARGET = main
 CC = g++
 
-SRC_DIRS = ./src
+SRC_DIRS = ./src/core ./src/cpu
 BUILD_DIR= ./build
-INC_DIRS = ./include
+INC_DIRS = ./include/core ./include/cpu
 
 SRCS = $(shell find $(SRC_DIRS) -name "*.cpp") 
 INCS = $(shell find $(INC_DIRS) -name "*.h")

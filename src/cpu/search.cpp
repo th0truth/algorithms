@@ -7,8 +7,7 @@
 #include "utils.h"
 using namespace std;
 
-namespace search
-{
+namespace cpu::search {
   int LinearSearch(i32* array, int size, i32 target, bool visualize, chrono::steady_clock::time_point start_time)
   {
     for (int i = 0; i < size; i++) {

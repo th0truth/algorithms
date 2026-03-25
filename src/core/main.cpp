@@ -1,15 +1,8 @@
 #include "base.h"
-#include "sort.h"
-#include "search.h"
 #include "sound.h"
 #include "utils.h"
-#include <iostream>
-#include <vector>
-#include <string>
-#include <chrono>
-#include <algorithm>
-#include <random>
-
+#include "sort.h"
+#include "search.h"
 using namespace std;
 
 struct Config {
@@ -154,21 +147,21 @@ int main(int argc, char* argv[])
 
   if (!active_sort.empty()) {
     if (active_sort == "BubbleSort") {
-      sort::BubbleSort(array, size, config.visualize, start_time);
+      cpu::sort::BubbleSort(array, size, config.visualize, start_time);
     } else if (active_sort == "InsertionSort") {
-      sort::InsertionSort(array, size, config.visualize, start_time);
+      cpu::sort::InsertionSort(array, size, config.visualize, start_time);
     } else if (active_sort == "SelectionSort") {
-      sort::SelectionSort(array, size, config.visualize, start_time);
+      cpu::sort::SelectionSort(array, size, config.visualize, start_time);
     } else if (active_sort == "MergeSort") {
-      sort::MergeSort(array, size, config.visualize, start_time);
+      cpu::sort::MergeSort(array, size, config.visualize, start_time);
     } else if (active_sort == "QuickSort") {
-      sort::QuickSort(array, size, config.visualize, start_time);
+      cpu::sort::QuickSort(array, size, config.visualize, start_time);
     } else if (active_sort == "ShellSort") {
-      sort::ShellSort(array, size, config.visualize, start_time);
+      cpu::sort::ShellSort(array, size, config.visualize, start_time);
     } else if (active_sort == "CocktailSort") {
-      sort::CocktailSort(array, size, config.visualize, start_time);
+      cpu::sort::CocktailSort(array, size, config.visualize, start_time);
     } else if (active_sort == "HeapSort") {
-      sort::HeapSort(array, size, config.visualize, start_time);
+      cpu::sort::HeapSort(array, size, config.visualize, start_time);
     } else if (config.algorithm.find("Sort") != string::npos) {
        cerr << "Unknown sorting algorithm: " << active_sort << endl;
        if (config.is_sound) SortAudio::cleanup();
@@ -180,10 +173,10 @@ int main(int argc, char* argv[])
   int search_result = -1;
   bool is_search = false;
   if (config.algorithm == "LinearSearch") {
-    search_result = search::LinearSearch(array, size, config.target, config.visualize, start_time);
+    search_result = cpu::search::LinearSearch(array, size, config.target, config.visualize, start_time);
     is_search = true;
   } else if (config.algorithm == "BinarySearch") {
-    search_result = search::BinarySearch(array, size, config.target, config.visualize, start_time);
+    search_result = cpu::search::BinarySearch(array, size, config.target, config.visualize, start_time);
     is_search = true;
   }
 

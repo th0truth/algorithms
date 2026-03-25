@@ -1,10 +1,10 @@
-#pragma once
 #include <vector>
 #include <string>
 #include <iostream>
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
+#include <random>
 
 typedef int32_t i32;
 typedef int16_t i16;
