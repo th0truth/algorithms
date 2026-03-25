@@ -21,7 +21,7 @@ CUDA is a parallel computing platform and programming model created by NVIDIA. I
 *   **CPU (Central Processing Unit):** Designed for complex logic and serial tasks. It has a few powerful cores optimized for sequential serial processing.
 *   **GPU (Graphics Processing Unit):** Designed for data-parallel tasks. It has thousands of smaller, more efficient cores designed for handling multiple tasks simultaneously.
 
-![CPU vs GPU](https://media.licdn.com/dms/image/v2/D4D12AQEpbXYIppRJmw/article-cover_image-shrink_720_1280/B4DZZgRxPuH4AI-/0/1745371993405?e=2147483647&v=beta&t=WGF2Pysnp0CYNmY7nisWqxwW478ROK0gi2zeAO8IkIM)
+![CPU vs GPU](https://developer.nvidia.com/sites/default/files/akamai/cuda/images/CPUGPU800.png)
 *Image Source: NVIDIA*
 
 ---
@@ -34,7 +34,7 @@ To manage thousands of threads, CUDA organizes them into a hierarchy:
 2.  **Block:** A group of threads that can cooperate and share memory.
 3.  **Grid:** A group of blocks that execute the same kernel.
 
-In this project's `GPULinearSearch`, each thread is responsible for checking exactly one element of the array. For an array of 1 million elements, 1 million threads are launched nearly simultaneously!
+In this project, GPU algorithms leverage this hierarchy to process massive datasets by launching thousands of threads simultaneously.
 
 ![CUDA Thread Hierarchy](https://docs.nvidia.com/cuda/cuda-c-programming-guide/_images/grid-of-thread-blocks.png)
 *Image Source: NVIDIA CUDA C Programming Guide*
@@ -55,9 +55,10 @@ In this project's `GPULinearSearch`, each thread is responsible for checking exa
 | **BubbleSort** | O(n) | O(n²) | O(n²) | O(1) |
 | **CocktailSort** | O(n) | O(n²) | O(n²) | O(1) |
 
-### ⚡ GPU Accelerated Searching
-*   **GPULinearSearch:** Massive parallel search where every element is checked in parallel. Uses `atomicMin` to find the first occurrence.
-*   **GPUBinarySearch:** A hybrid approach where the array is partitioned into segments, and each GPU thread performs a binary search on its assigned segment.
+### ⚡ GPU Accelerated Algorithms
+*   **GpuMergeSort:** A high-performance parallel implementation of the divide-and-conquer merge sort.
+*   **GpuLinearSearch:** Massive parallel search where every element is checked in parallel. Uses `atomicMin` to find the first occurrence.
+*   **GpuBinarySearch:** A hybrid approach where the array is partitioned into segments, and each GPU thread performs a binary search on its assigned segment.
 
 ### 🎨 Visualizer & Audio
 *   **Real-time Visualization:** ASCII-based bar charts that animate in your terminal.
@@ -83,12 +84,37 @@ make
 # CPU Sorting with Visualization and Sound
 ./build/main QuickSort --visualize --sound random 50 1 100
 
-# GPU Parallel Search (Benchmark)
-./build/main GPULinearSearch random 1000000 1 5000 --target 42
+# GPU Merge Sort (Large Scale)
+./build/main GpuMergeSort random 1000000 1 10000
 
-# CPU Search with Visualization
-./build/main LinearSearch --visualize random 20 1 50 --target 10
+# GPU Parallel Search
+./build/main GpuLinearSearch random 1000000 1 5000 --target 42
 ```
+
+---
+
+## 🔬 Deep Dive: GPU Algorithms
+
+### GPU Linear Search
+In `src/gpu/search.cu`, we implement a **Parallel Linear Search**:
+```cpp
+__global__ void LinearSearchKernel(const i32* vram_array, int size, i32 target, int* vram_result) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < size) {
+        if (vram_array[idx] == target) {
+            atomicMin(vram_result, idx); // Thread-safe update of result
+        }
+    }
+}
+```
+
+### GPU Merge Sort
+Merge Sort on the GPU is significantly more complex than the CPU version. Instead of a simple recursive approach, it uses a **bottom-up iterative approach**:
+
+1.  **Phase 1 (Block Sort):** Each thread block loads a chunk of data into high-speed **Shared Memory** and sorts it using a fast local algorithm (like Bitonic Sort or Odd-Even Sort).
+2.  **Phase 2 (Global Merge):** Sorted chunks are merged together in stages. In each stage, a "Parallel Merge" kernel is launched where threads calculate the exact final position of elements from two sorted sub-lists by performing a binary search on the opposite list.
+
+**Why is it faster?** While the CPU merges two lists by comparing elements one-by-one, the GPU merges them by calculating the final index of many elements simultaneously, utilizing thousands of cores.
 
 ---
 
@@ -106,25 +132,6 @@ algorithms/
 ├── Makefile       # Hybrid C++/CUDA Build System
 └── README.md
 ```
-
----
-
-## 🔬 How the GPU Search Works
-
-In `src/gpu/search.cu`, we implement a **Parallel Linear Search**:
-
-```cpp
-__global__ void LinearSearchKernel(const i32* vram_array, int size, i32 target, int* vram_result) {
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (idx < size) {
-        if (vram_array[idx] == target) {
-            atomicMin(vram_result, idx); // Thread-safe update of result
-        }
-    }
-}
-```
-
-By launching `(size / 256)` blocks of 256 threads each, we achieve near-instantaneous search across massive datasets that would take a CPU significantly longer to scan linearly.
 
 ---
 
