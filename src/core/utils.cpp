@@ -9,16 +9,8 @@ void Viz::draw_state(const string& current_alg_name, i32* array, int size, chron
   auto now = chrono::steady_clock::now();
   auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - start_time).count();
   
-  // Header with a box
-  cout << "\033[1;36m\xe2\x95\x94";
-  for(int i=0; i<70; i++) cout << "\xe2\x95\x90";
-  cout << "\xe2\x95\x97\n";
-  
-  printf("\xe2\x95\x91 %-45s [Time: %6ld ms] \xe2\x95\x91\n", current_alg_name.c_str(), elapsed);
-  
-  cout << "\xe2\x95\x9a";
-  for(int i=0; i<70; i++) cout << "\xe2\x95\x90";
-  cout << "\xe2\x95\x9d\033[0m\n\n";
+  // Header without the box
+  cout << "\033[1;36m" << current_alg_name << " [Time: " << elapsed << " ms]\033[0m\n\n";
   
   int max_val = 1;
   for (int i = 0; i < size; i++) {
@@ -91,7 +83,8 @@ void Viz::draw_heap_state(const string& current_alg_name, i32* array, int size, 
   auto now = chrono::steady_clock::now();
   auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - start_time).count();
   
-  cout << "\"" << current_alg_name << "\" Visualizing Sorting Algorithm... [Elapsed Time: " << elapsed << " ms]\n\n";
+  // Header without the box
+  cout << "\033[1;36m" << current_alg_name << " [Time: " << elapsed << " ms]\033[0m\n\n";
 
   int max_val = 1;
   for (int i = 0; i < size; i++) {
