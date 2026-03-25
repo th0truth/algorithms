@@ -1,4 +1,4 @@
-# Algorithms & CUDA Parallel Processing
+# 🚀 Algorithms & CUDA Parallel Processing
 
 A comprehensive, real-time visualization and benchmarking suite for CPU and GPU algorithms, written in C++ and CUDA. This project demonstrates the power of parallel computing by comparing traditional serial CPU algorithms with high-performance GPU implementations.
 
@@ -54,10 +54,16 @@ In this project, GPU algorithms leverage this hierarchy to process massive datas
 | **BubbleSort** | O(n) | O(n²) | O(n²) | O(1) |
 | **CocktailSort** | O(n) | O(n²) | O(n²) | O(1) |
 
+### 🔍 Search Algorithms
+| Algorithm | CPU Time | GPU Strategy |
+|-----------|----------|--------------|
+| **Linear Search** | O(n) | **Massive Parallel:** Every thread checks one element. |
+| **Binary Search** | O(log n) | **Hybrid Parallel:** Array is split into segments; each thread binary searches its segment. |
+
 ### ⚡ GPU Accelerated Algorithms
 *   **GpuMergeSort:** A high-performance parallel implementation of the divide-and-conquer merge sort.
-*   **GpuLinearSearch:** Massive parallel search where every element is checked in parallel. Uses `atomicMin` to find the first occurrence.
-*   **GpuBinarySearch:** A hybrid approach where the array is partitioned into segments, and each GPU thread performs a binary search on its assigned segment.
+*   **GpuLinearSearch:** Parallel search where every element is checked simultaneously. Uses `atomicMin` to find the first occurrence.
+*   **GpuBinarySearch:** Parallelized search that divides the search space among thousands of threads for extremely fast lookups in sorted data.
 
 ### 🎨 Visualizer & Audio
 *   **Real-time Visualization:** ASCII-based bar charts that animate in your terminal.
@@ -88,6 +94,9 @@ make
 
 # GPU Parallel Search
 ./build/main GpuLinearSearch random 1000000 1 5000 --target 42
+
+# CPU Binary Search with Visualization
+./build/main BinarySearch --visualize random 20 1 50 --target 10
 ```
 
 ---
@@ -107,13 +116,13 @@ __global__ void LinearSearchKernel(const i32* vram_array, int size, i32 target, 
 }
 ```
 
+### GPU Binary Search
+Instead of a single binary search, the GPU version divides the array into thousands of segments. Each thread is assigned a segment and performs a standard binary search within it. For an array of 1 million elements, using 65,000 threads means each thread only has to check ~15 elements!
+
 ### GPU Merge Sort
-Merge Sort on the GPU is significantly more complex than the CPU version. Instead of a simple recursive approach, it uses a **bottom-up iterative approach**:
-
-1.  **Phase 1 (Block Sort):** Each thread block loads a chunk of data into high-speed **Shared Memory** and sorts it using a fast local algorithm (like Bitonic Sort or Odd-Even Sort).
-2.  **Phase 2 (Global Merge):** Sorted chunks are merged together in stages. In each stage, a "Parallel Merge" kernel is launched where threads calculate the exact final position of elements from two sorted sub-lists by performing a binary search on the opposite list.
-
-**Why is it faster?** While the CPU merges two lists by comparing elements one-by-one, the GPU merges them by calculating the final index of many elements simultaneously, utilizing thousands of cores.
+Merge Sort on the GPU uses a **bottom-up iterative approach**:
+1.  **Phase 1 (Block Sort):** Thread blocks sort small chunks in **Shared Memory**.
+2.  **Phase 2 (Global Merge):** Sorted chunks are merged in parallel across the entire GPU.
 
 ---
 
