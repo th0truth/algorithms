@@ -1,125 +1,132 @@
-# Sorting Algorithms Visualizer
+# Algorithms & CUDA Parallel Processing
 
-A real-time sorting algorithm visualizer with audio feedback, built in C++.
+A comprehensive, real-time visualization and benchmarking suite for CPU and GPU algorithms, written in C++ and CUDA. This project demonstrates the power of parallel computing by comparing traditional serial CPU algorithms with high-performance GPU implementations.
 
 ![Build Status](https://img.shields.io/badge/build-passing-green)
 ![C++](https://img.shields.io/badge/C++-17-blue)
+![CUDA](https://img.shields.io/badge/CUDA-11.0+-green)
 ![SDL2](https://img.shields.io/badge/SDL2-2.0+-orange)
 
-## Features
+---
 
-### Supported Algorithms
-| Algorithm | Time Complexity | Space Complexity |
-|-----------|----------------|------------------|
-| BubbleSort | O(n²) | O(1) |
-| CocktailSort | O(n²) | O(1) |
-| HeapSort | O(n log n) | O(1) |
-| InsertionSort | O(n²) | O(1) |
-| MergeSort | O(n log n) | O(n) |
-| QuickSort | O(n log n) avg | O(log n) |
-| SelectionSort | O(n²) | O(1) |
-| ShellSort | O(n log n) | O(1) |
+## 🧠 What is CUDA & Parallel Computing?
 
-### Visualization Mode
-Watch sorting algorithms in action with ASCII bar charts that animate in real-time. Each comparison and swap is visually highlighted, making it easy to understand how each algorithm works.
+### Parallel Computing
+Traditional CPU programs are **serial**: they execute instructions one after another. **Parallel computing** is the simultaneous use of multiple compute resources to solve a computational problem. It breaks a large task into smaller ones, which are then solved at the same time.
 
-### Audio Feedback
-Optional sound effects that play tones based on the value being sorted. Higher values produce higher pitches, creating a musical representation of the sorting process.
+### CUDA (Compute Unified Device Architecture)
+CUDA is a parallel computing platform and programming model created by NVIDIA. It allows developers to use a CUDA-enabled graphics processing unit (GPU) for general-purpose processing (GPGPU).
 
-- `--visualize` - Show visual representation
-- `--sound` - Enable audio (requires `--visualize`)
+#### CPU vs. GPU Architecture
+*   **CPU (Central Processing Unit):** Designed for complex logic and serial tasks. It has a few powerful cores optimized for sequential serial processing.
+*   **GPU (Graphics Processing Unit):** Designed for data-parallel tasks. It has thousands of smaller, more efficient cores designed for handling multiple tasks simultaneously.
 
-### Flexible Input
-- Provide custom arrays: `BubbleSort 64 34 25 12 22 11 90`
-- Generate random arrays: `BubbleSort random 15 1 100`
-- Combine flags: `BubbleSort --visualize --sound random 20 1 50`
+![CPU vs GPU](https://media.licdn.com/dms/image/v2/D4D12AQEpbXYIppRJmw/article-cover_image-shrink_720_1280/B4DZZgRxPuH4AI-/0/1745371993405?e=2147483647&v=beta&t=WGF2Pysnp0CYNmY7nisWqxwW478ROK0gi2zeAO8IkIM)
+*Image Source: NVIDIA*
 
-### Detailed Logging
-Step-by-step TRACE logging shows:
-- Each pass number
-- Comparisons made
-- Swaps performed
-- Array state after each operation
+---
 
-### Performance Metrics
-Automatically measures and displays execution time in nanoseconds.
+## 🏗️ Architecture & Concepts
 
-## Installation
+### The CUDA Hierarchy: Grids, Blocks, and Threads
+To manage thousands of threads, CUDA organizes them into a hierarchy:
+1.  **Thread:** The smallest unit of execution.
+2.  **Block:** A group of threads that can cooperate and share memory.
+3.  **Grid:** A group of blocks that execute the same kernel.
+
+In this project's `GPULinearSearch`, each thread is responsible for checking exactly one element of the array. For an array of 1 million elements, 1 million threads are launched nearly simultaneously!
+
+![CUDA Thread Hierarchy](https://docs.nvidia.com/cuda/cuda-c-programming-guide/_images/grid-of-thread-blocks.png)
+*Image Source: NVIDIA CUDA C Programming Guide*
+
+---
+
+## ✨ Features
+
+### 🖥️ CPU Sorting Algorithms
+| Algorithm | Best Case | Average Case | Worst Case | Space |
+|-----------|-----------|--------------|------------|-------|
+| **QuickSort** | O(n log n) | O(n log n) | O(n²) | O(log n) |
+| **MergeSort** | O(n log n) | O(n log n) | O(n log n) | O(n) |
+| **HeapSort** | O(n log n) | O(n log n) | O(n log n) | O(1) |
+| **ShellSort** | O(n log n) | O(n log^2 n)| O(n log^2 n)| O(1) |
+| **InsertionSort**| O(n) | O(n²) | O(n²) | O(1) |
+| **SelectionSort**| O(n²) | O(n²) | O(n²) | O(1) |
+| **BubbleSort** | O(n) | O(n²) | O(n²) | O(1) |
+| **CocktailSort** | O(n) | O(n²) | O(n²) | O(1) |
+
+### ⚡ GPU Accelerated Searching
+*   **GPULinearSearch:** Massive parallel search where every element is checked in parallel. Uses `atomicMin` to find the first occurrence.
+*   **GPUBinarySearch:** A hybrid approach where the array is partitioned into segments, and each GPU thread performs a binary search on its assigned segment.
+
+### 🎨 Visualizer & Audio
+*   **Real-time Visualization:** ASCII-based bar charts that animate in your terminal.
+*   **Sonification:** Using SDL2 to generate tones mapped to element values. Hear the "sound of sorting"!
+
+---
+
+## 🛠️ Getting Started
 
 ### Prerequisites
-- C++17 compiler
-- SDL2 library
+*   **Compiler:** `g++` (C++17 support)
+*   **GPU Toolkit:** `nvcc` (NVIDIA CUDA Toolkit)
+*   **Libraries:** `SDL2` (for audio)
+*   **Hardware:** NVIDIA GPU (required for GPU algorithms)
 
 ### Build
 ```bash
 make
 ```
 
-### Clean
+### Usage
 ```bash
-make clean
+# CPU Sorting with Visualization and Sound
+./build/main QuickSort --visualize --sound random 50 1 100
+
+# GPU Parallel Search (Benchmark)
+./build/main GPULinearSearch random 1000000 1 5000 --target 42
+
+# CPU Search with Visualization
+./build/main LinearSearch --visualize random 20 1 50 --target 10
 ```
 
-## Usage
+---
 
-```bash
-./build/main.o <algorithm> [--visualize] [--sound] <array_elements...>
-./build/main.o <algorithm> [--visualize] [--sound] random <count> <min> <max>
-```
-
-### Examples
-
-```bash
-# Basic sorting
-./build/main.o BubbleSort 64 34 25 12 22 11 90
-
-# Visualize sorting
-./build/main.o QuickSort --visualize random 20 1 100
-
-# Visualize with sound
-./build/main.o MergeSort --visualize --sound random 15 1 50
-
-# Compare algorithms
-./build/main.o SelectionSort 50 25 75 10 30
-./build/main.o InsertionSort 50 25 75 10 30
-```
-
-## Project Structure
-
-```
+## 📂 Project Structure
+```text
 algorithms/
 ├── include/
-│   ├── algorithms.h    # Algorithm declarations
-│   ├── base.h          # Base definitions and types
-│   └── sound.h         # Audio system
+│   ├── core/      # Base classes, Config, Sound, Utils
+│   ├── cpu/       # CPU Algorithm headers (Sort, Search)
+│   └── gpu/       # CUDA Kernel headers
 ├── src/
-│   ├── main.cpp        # Entry point & CLI
-│   ├── algorithms.cpp  # Sorting implementations
-│   └── sound.cpp       # SDL2 audio
-├── Makefile
+│   ├── core/      # Main entry, CLI logic, Audio implementation
+│   ├── cpu/       # C++ implementations of sorting/searching
+│   └── gpu/       # CUDA (.cu) implementations
+├── Makefile       # Hybrid C++/CUDA Build System
 └── README.md
 ```
 
-## How It Works
+---
 
-### TRACE System
-The `TRACE()` macro outputs detailed logging when visualization is disabled:
+## 🔬 How the GPU Search Works
+
+In `src/gpu/search.cu`, we implement a **Parallel Linear Search**:
+
 ```cpp
-TRACE("Comparing " << a << " and " << b << endl);
+__global__ void LinearSearchKernel(const i32* vram_array, int size, i32 target, int* vram_result) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < size) {
+        if (vram_array[idx] == target) {
+            atomicMin(vram_result, idx); // Thread-safe update of result
+        }
+    }
+}
 ```
 
-### Visualization
-Uses ANSI escape codes for terminal control:
-- `\033[2J\033[H` - Clear screen and home cursor
-- `\033[1;31m` - Red highlight for active elements
-- `\033[0m` - Reset formatting
+By launching `(size / 256)` blocks of 256 threads each, we achieve near-instantaneous search across massive datasets that would take a CPU significantly longer to scan linearly.
 
-### Audio
-SDL2-based tone generator:
-- Frequency mapped to element value
-- 30ms duration per tone
-- Configurable max frequency
+---
 
-## License
-
-MIT License
+## 📜 License
+This project is open-source and available under the MIT License.

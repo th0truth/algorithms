@@ -12,7 +12,7 @@ void Config::print_usage(const char* program_name)
   cout << "  " << program_name << " <algorithm> --random <count> [min] [max] [flags]\n\n";
   cout << "Algorithms:\n";
   cout << "  - Sorts:   BubbleSort, InsertionSort, SelectionSort, MergeSort, \n";
-  cout << "             QuickSort, ShellSort, CocktailSort, HeapSort\n";
+  cout << "             QuickSort, ShellSort, CocktailSort, HeapSort, GpuMergeSort\n";
   cout << "  - Search:  LinearSearch, BinarySearch, GpuLinearSearch, GpuBinarySearch\n\n";
   cout << "Flags:\n";
   cout << "  --visualize    Enable step-by-step visualization\n";

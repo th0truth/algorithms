@@ -2,6 +2,7 @@
 #include "sound.h"
 #include "utils.h"
 #include "sort.h"
+#include "sort.cuh"
 #include "search.h"
 #include "search.cuh"
 #include "config.h"
@@ -80,6 +81,8 @@ int main(int argc, char** argv)
       cpu::sort::CocktailSort(array, size, config.visualize, start_time);
     } else if (active_sort == "HeapSort") {
       cpu::sort::HeapSort(array, size, config.visualize, start_time);
+    } else if (active_sort == "GpuMergeSort") {
+      gpu::sort::MergeSort(array, size, config.visualize, start_time);
     } else if (config.algorithm.find("Sort") != string::npos) {
        cerr << "Unknown sorting algorithm: " << active_sort << endl;
        if (config.is_sound) SortAudio::cleanup();
@@ -97,10 +100,10 @@ int main(int argc, char** argv)
     search_result = cpu::search::BinarySearch(array, size, config.target, config.visualize, start_time);
     is_search = true;
   } else if (config.algorithm == "GpuLinearSearch") {
-    search_result = gpu::search::LinearSearch(array, size, config.target);
+    search_result = gpu::search::LinearSearch(array, size, config.target, config.visualize, start_time);
     is_search = true;
   } else if (config.algorithm == "GpuBinarySearch") {
-    search_result = gpu::search::BinarySearch(array, size, config.target);
+    search_result = gpu::search::BinarySearch(array, size, config.target, config.visualize, start_time);
     is_search = true;
   }
 
